@@ -10,19 +10,37 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
 });
 
+//Memory database
+const users = [];
+
 // POST username
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use("/api/users", bodyParser.json());
 app.post("/api/users", (req, res) => {
     let username = req.body.username;
 
-    //Generate an userId
-    const generatedId = 'user-' + Math.random().toString(36).substring(2, 15);
+    // Generate random ID
+    const generatedRandomId = () => Math.random().toString(16).slice(2);
+
+    // Generate new userId and create new user
+    const newUser = {
+      _id: generatedRandomId(),
+      username: username
+    };
+
+    // Save newUser on database
+    users.push(newUser);
 
     res.json({ 
-      _id: generatedId, 
-      username: username 
+      _id: newUser._id,
+      username: newUser.username
     });
+});
+
+//GET _id and username
+app.get('/api/users', (req, res) => {
+
+  res.json(users);
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
