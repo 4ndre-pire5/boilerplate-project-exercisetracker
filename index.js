@@ -15,7 +15,14 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use("/api/users", bodyParser.json());
 app.post("/api/users", (req, res) => {
     let username = req.body.username;
-    res.json({ username: `${username}` });
+
+    //Generate an userId
+    const generatedId = 'user-' + Math.random().toString(36).substring(2, 15);
+
+    res.json({ 
+      _id: generatedId, 
+      username: username 
+    });
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
