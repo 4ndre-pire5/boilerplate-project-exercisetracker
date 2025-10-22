@@ -85,6 +85,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
 //Get log exercises
 app.get('/api/users/:_id/logs', (req, res) => {
   const userId = req.params._id;
+  const { from, to , limit } = req.query;
 
   //Find user
   const user = users.find(u => u._id === userId);
