@@ -54,7 +54,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
     return res.status(404).json({ error: "User not found "})
   }
 
-  //Validate descriotion and duration
+  //Validate description and duration
   if (!description || !duration) {
     return res.status(400).json( { error: "Description and duration are required "});
   }
@@ -80,6 +80,41 @@ app.post("/api/users/:_id/exercises", (req, res) => {
 
   res.json(exercise);
 
+});
+
+//Get log exercises
+app.get('/api/users/:_id/logs', (req, res) => {
+  const userId = req.params._id;
+
+  //Find user
+  const user = users.find(u => u._id === userId);
+  if (!user) {
+    return res.status(404).json({ error: "User not found "})
+  }
+
+  let log = [...user.exercises];
+
+  //Filter by date
+  if (from) {
+    const fromDate = new Date(from);
+    log = log.filter(e => new Date(e.date) >= fromDate);
+  }
+  if (to) {
+    const toDate = new Date(to);
+    log = log.filter(e => new Date(e.date) <= toDate);
+  }
+
+  //Filter by limit
+  if (limit) {
+    log = log.slice(0, parseInt(limit));
+  }
+  
+  res.json({ 
+    _id: userId,
+    username: user.username,
+    count: log.length,
+    log
+   });
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
